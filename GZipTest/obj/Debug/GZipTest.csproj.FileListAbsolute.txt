@@ -5,3 +5,9 @@ C:\Users\Belyak_IS\Documents\Visual Studio 2017\Projects\GZipTest\GZipTest\obj\D
 C:\Users\Belyak_IS\Documents\Visual Studio 2017\Projects\GZipTest\GZipTest\obj\Debug\GZipTest.exe
 C:\Users\Belyak_IS\Documents\Visual Studio 2017\Projects\GZipTest\GZipTest\obj\Debug\GZipTest.pdb
 C:\Users\Belyak_IS\Documents\Visual Studio 2017\Projects\GZipTest\GZipTest\obj\Debug\GZipTest.csprojResolveAssemblyReference.cache
+D:\Projects\GZipTest\GZipTest\bin\Debug\GZipTest.exe.config
+D:\Projects\GZipTest\GZipTest\bin\Debug\GZipTest.exe
+D:\Projects\GZipTest\GZipTest\bin\Debug\GZipTest.pdb
+D:\Projects\GZipTest\GZipTest\obj\Debug\GZipTest.csproj.CoreCompileInputs.cache
+D:\Projects\GZipTest\GZipTest\obj\Debug\GZipTest.exe
+D:\Projects\GZipTest\GZipTest\obj\Debug\GZipTest.pdb

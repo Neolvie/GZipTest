@@ -89,20 +89,29 @@ namespace GZipTest.Archiver
           size = sourceStream.Length - offset;
 
         archivePart.Offset = offset;
-        var compressingTask = new ProcessingTask(() =>
+        var readingTask = new ProcessingTask(() =>
         {
           var portionArray = new byte[size];
-          lock (sourceStream)
-          {
-            sourceStream.Seek(archivePart.Offset, SeekOrigin.Begin);
+          lock (sourceStream)        
             sourceStream.Read(portionArray, 0, (int)size);
-          }
 
           archivePart.Input = portionArray;
-          archivePart.Compress();
-          
         });
 
+        _queueManager.ReadingQueue.Enqueue(readingTask);
+
+        var compressingTask = new ProcessingTask(() =>
+        {
+          while (true)
+          {
+            if (archivePart.Input == null)
+              continue;
+
+            archivePart.Compress();
+            break;
+          }
+        });
+        
         _queueManager.CompressQueue.Enqueue(compressingTask);
 
         var writingTask = new ProcessingTask(() =>
@@ -165,16 +174,29 @@ namespace GZipTest.Archiver
 
       foreach (var archivePart in _archiveParts)
       {
-        var decompressingTask = new ProcessingTask(() =>
+        var readingTask = new ProcessingTask(() =>
         {
           lock (sourceStream)
           {
             sourceStream.Seek(archivePart.Offset, SeekOrigin.Begin);
-            archivePart.Input = new byte[archivePart.Size];
-            sourceStream.Read(archivePart.Input, 0, archivePart.Size);
+            var buffer = new byte[archivePart.Size];
+            sourceStream.Read(buffer, 0, archivePart.Size);
+            archivePart.Input = buffer;
           }
+        });
 
-          archivePart.Decompress();
+        _queueManager.ReadingQueue.Enqueue(readingTask);
+
+        var decompressingTask = new ProcessingTask(() =>
+        {
+          while (true)
+          {
+            if (archivePart.Input == null)
+              continue;
+
+            archivePart.Decompress();
+            break;
+          }
         });
 
         _queueManager.CompressQueue.Enqueue(decompressingTask);

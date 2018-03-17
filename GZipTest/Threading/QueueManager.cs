@@ -13,6 +13,7 @@ namespace GZipTest.Threading
   {
     #region Поля и свойства
 
+    public readonly ProducerConsumer<ProcessingTask> ReadingQueue = new ProducerConsumer<ProcessingTask>();
     public readonly ProducerConsumer<ProcessingTask> CompressQueue = new ProducerConsumer<ProcessingTask>();
     public readonly ProducerConsumer<ProcessingTask> WritingQueue = new ProducerConsumer<ProcessingTask>();
     private readonly List<Thread> _threads;
@@ -20,6 +21,21 @@ namespace GZipTest.Threading
     #endregion
 
     #region Методы
+
+    /// <summary>
+    /// Обработчик очереди чтения потоков.
+    /// </summary>
+    private void ReaderConsumer()
+    {
+      while (true)
+      {
+        var task = ReadingQueue.Dequeue();
+        if (task == null)
+          break;
+
+        task.Action.Invoke();
+      }
+    }
 
     /// <summary>
     /// Обработчик очереди архивации/разархивации потоков.
@@ -101,6 +117,8 @@ namespace GZipTest.Threading
       else
         for (var i = 0; i < Environment.ProcessorCount - 1; i++)
           _threads.Add(new Thread(() => ExecuteHandler(CompressConsumer, exceptionHandler)));
+
+      _threads.Add(new Thread(() => ExecuteHandler(ReaderConsumer, exceptionHandler)));
     }
 
     #endregion
